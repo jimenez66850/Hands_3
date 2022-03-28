@@ -13,42 +13,111 @@ import java.util.Comparator;
  * @author luisjimenezmendoza
  */
 public class Population {
-    private ArrayList<Chromosome> Dna;
-    private int generation;
-    
-    public Population(){
-        Dna = new ArrayList<>();
+
+    private ArrayList<Chromosome> dna;
+    private int generation, fitness, roulette;
+
+    public Population() {
+        dna = new ArrayList<>();
         generation = 0;
+        fitness = 0;
+        roulette = 0;
     }
-    
-    
-    public Population(ArrayList<Chromosome> _Dna,int _generation){
-        Dna = new ArrayList<>(_Dna);
+
+    public Population(Population _population, int _generation) {
+        dna = new ArrayList<>(_population.getDna());
+        generation = _generation;
+        setFitness();
+    }
+
+    public ArrayList<Chromosome> getDna() {
+        return dna;
+    }
+
+    public void setRuletteValues() {
+        int _roulette = 0;
+        float division;
+        for (int i = 0; i < dna.size(); i++) {
+            division = ((float) dna.get(i).getFitness() / (float) fitness);
+            _roulette += (int) (division * 100);
+            dna.get(i).setRulette(_roulette);
+        }
+        roulette = _roulette;
+
+    }
+
+    public int getRulette() {
+        return roulette;
+    }
+
+    public void mutatePopulation() {
+        for (int i = 0; i < dna.size(); i++) {
+            dna.get(i).mutate();
+        }
+    }
+
+    public int size() {
+        return dna.size();
+    }
+
+    public void pushChromosome(Chromosome chromosome) {
+        dna.add(chromosome);
+    }
+
+    public Chromosome getChromosome(int index) {
+        return dna.get(index);
+    }
+
+    public void setChromosome(int index, Chromosome chromosome) {
+        dna.add(index, chromosome);
+    }
+
+    public void setGeneration(int _generation) {
         generation = _generation;
     }
-    
-    public void pushChromosome(Chromosome chromosome){
-        Dna.add(chromosome);
+
+    public int getGeneration() {
+        return generation;
     }
-    
-    public Chromosome getChromosome(int index){
-        return Dna.get(index);
-    }
-    
-    public void setChromosome(int index, Chromosome chromosome){
-        Dna.add(index, chromosome);
-    }
-    
-    public void setGeneration(int _generation){
-        generation = _generation;
-    }
-    
-    public void sortByFitness(){
-        Collections.sort(Dna, new Comparator<Chromosome>() {
-	@Override
-	public int compare(Chromosome p1, Chromosome p2) {
-            return new Integer(p1.getFitness()).compareTo(new Integer(p2.getFitness()));
+
+    public void sortByFitness() {
+        Collections.sort(dna, new Comparator<Chromosome>() {
+            @Override
+            public int compare(Chromosome p1, Chromosome p2) {
+                return new Integer(p1.getFitness()).compareTo(new Integer(p2.getFitness()));
             }
         });
     }
+
+    public boolean isTheAnswer() {
+        for (int i = 0; i < dna.size(); i++) {
+            if (dna.get(i).isTheAnswer()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public int getFitness() {
+        return fitness;
+    }
+
+    public void setFitness() {
+        int _fitness = 0;
+        for (int i = 0; i < dna.size(); i++) {
+            _fitness += dna.get(i).getFitness();
+        }
+        fitness = _fitness;
+    }
+
+    @Override
+    public String toString() {
+        String _content = "";
+        for (int i = 0; i < dna.size(); i++) {
+            _content += dna.get(i).toString() + "\n";
+        }
+        _content += "Population fitness = " + String.valueOf(fitness);
+        return _content;
+    }
+
 }
