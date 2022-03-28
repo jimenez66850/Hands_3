@@ -13,10 +13,20 @@ import java.util.ArrayList;
 public class Gas {
 
     private ArrayList<Population> populationArray;
-    private final int mutationRate = 5, crossoverRate = 95, populationSize = 10, chromosomeSize = 9, elitismRate = 2;
-    private int generation = 0, iterations = 1000;
-
+    private int mutationRate = 5, crossOverRate = 95, populationSize = 10, chromosomeSize = 9, elitismRate = 2,generation = 0, iterations = 1000;
+    
     public Gas() {
+        populationArray = new ArrayList<>();
+    }
+    
+    public Gas(int _mutationRate,int _crossOverRate,int _populationSize,int _chromosomeSize,int _elitismRate,int _iterations){
+        populationArray = new ArrayList<>();
+        mutationRate = _mutationRate;
+        crossOverRate = _crossOverRate;        
+        populationSize = _populationSize;
+        chromosomeSize = _chromosomeSize;
+        elitismRate = _elitismRate;
+        iterations = _iterations;
     }
 
     private Population setInitialPopulation() {
@@ -26,7 +36,7 @@ public class Gas {
             for (int j = 0; j < chromosomeSize; j++) {
                 _chromosome += String.valueOf((int) ((Math.random() * 2)));
             }
-            individual.pushChromosome(new Chromosome(_chromosome));
+            individual.pushChromosome(new Chromosome(_chromosome,mutationRate));
             _chromosome = "";
         }
         individual.setFitness();
@@ -36,14 +46,14 @@ public class Gas {
 
     private void setParents(Population newPopulation) {
         for (int i = elitismRate; i < populationSize; i++) {
-            newPopulation.pushChromosome(populationArray.get(generation).getChromosome(populationSize - i));
+            newPopulation.pushChromosome(populationArray.get(generation).getChromosome(populationSize - i-1));
         }
     }
 
     private Chromosome selectParent(Population parents) {
-        int roulette = (int) (Math.random() * parents.getRulette()) + 1;
+        int roulettePersentage = (int) (Math.random() * parents.getRoulettePersentage()) + 1;
         for (int i = 0; i < parents.size(); i++) {
-            if (roulette <= parents.getChromosome(i).getRulette()) {
+            if (roulettePersentage <= parents.getChromosome(i).getRoulettePersentage()) {
                 return parents.getChromosome(i);
             }
         }
@@ -52,13 +62,13 @@ public class Gas {
 
     private Chromosome crossOver(Chromosome parent1, Chromosome parent2) {
         int crossOverCut = (int) (Math.random() * (chromosomeSize - 2) + 2);
-        return new Chromosome(parent1.getContent().substring(0, crossOverCut) + parent2.getContent().substring(crossOverCut, chromosomeSize));
+        return new Chromosome(parent1.getContent().substring(0, crossOverCut) + parent2.getContent().substring(crossOverCut, chromosomeSize),mutationRate);
 
     }
 
     private void crossOver(Population Parents, Population newPopulation) {
         for (int i = 0; i < Parents.size(); i++) {
-            if (crossoverRate > (int) (Math.random() * 100) + 1) {
+            if (crossOverRate > (int) (Math.random() * 100) + 1) {
                 newPopulation.pushChromosome(crossOver(Parents.getChromosome(i), selectParent(Parents)));
             } else {
                 newPopulation.pushChromosome(Parents.getChromosome(i));
@@ -71,7 +81,6 @@ public class Gas {
         int _iterations = 0;
         Population newPopulation;
         Population parents;
-        populationArray = new ArrayList<>();
         populationArray.add(setInitialPopulation());
         System.out.println(populationArray.get(generation).toString());
         while (!populationArray.get(generation).isTheAnswer() && _iterations < iterations) {
@@ -83,7 +92,7 @@ public class Gas {
             }
             setParents(parents);
             parents.setFitness();
-            parents.setRuletteValues();
+            parents.setRoulettePersentageValues();
             crossOver(parents, newPopulation);
             newPopulation.mutatePopulation();
             newPopulation.setFitness();

@@ -10,22 +10,22 @@ package com.mycompany.handon_3;
  */
 public class Chromosome {
 
-    private int roulette;
-    private int fitness = 0;
+    private int fitness = 0,roulettePersentage,mutationRate;
     private String content;
 
-    public Chromosome(String _content) {
+    public Chromosome(String _content,int _mutationRate) {
         content = _content;
         setFitness();
-        roulette = 0;
+        roulettePersentage = 0;
+        mutationRate = _mutationRate;
     }
 
-    public void setRulette(int roulette) {
-        this.roulette = roulette;
+    public void setRoulettePersentage(int roulettePersentage) {
+        this.roulettePersentage = roulettePersentage;
     }
 
-    public int getRulette() {
-        return roulette;
+    public int getRoulettePersentage() {
+        return roulettePersentage;
     }
 
     public void setFitness() {
@@ -42,7 +42,7 @@ public class Chromosome {
         String _content = "";
         for (int i = 0; i < content.length(); i++) {
             int numero = (int) (Math.random() * 100);
-            if (numero < 5) {
+            if (numero < mutationRate) {
                 if (content.charAt(i) == '1') {
                     _content += '0';
                 } else {

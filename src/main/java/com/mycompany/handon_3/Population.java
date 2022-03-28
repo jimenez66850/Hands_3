@@ -34,19 +34,19 @@ public class Population {
         return dna;
     }
 
-    public void setRuletteValues() {
+    public void setRoulettePersentageValues() {
         int _roulette = 0;
         float division;
         for (int i = 0; i < dna.size(); i++) {
             division = ((float) dna.get(i).getFitness() / (float) fitness);
             _roulette += (int) (division * 100);
-            dna.get(i).setRulette(_roulette);
+            dna.get(i).setRoulettePersentage(_roulette);
         }
         roulette = _roulette;
 
     }
 
-    public int getRulette() {
+    public int getRoulettePersentage() {
         return roulette;
     }
 
